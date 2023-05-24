@@ -1,4 +1,6 @@
 class Enkel::Action
+  class NotImplementedError < StandardError; end
+
   STATUSES = {
     continue: 100,
     switching_protocols: 101,
@@ -73,6 +75,10 @@ class Enkel::Action
       instance.call
       instance
     end
+  end
+
+  def call
+    raise Enkel::Action::NotImplementedError
   end
 
   def respond(status = nil, object = nil)

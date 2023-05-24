@@ -1,0 +1,200 @@
+<html>
+  <head>
+    <script>
+      const instances = {}
+
+      // Create an observer instance linked to the callback function
+      const observer = new MutationObserver((mutations, observer) => {
+        let addedNodes = []
+        let removedNodes = []
+        let elementType = 1
+
+        for (const mutation of mutations) {
+          if (mutation.type === "childList") {
+            mutation.addedNodes.forEach(node => node.nodeType === 1 && addedNodes.push(node))
+            mutation.removedNodes.forEach(node => node.nodeType === 1 && removedNodes.push(node))
+
+            addedNodes.forEach((node) => {
+              instances[node] = node
+              // console.log(node)
+            })
+
+
+          } else if (mutation.type === "attributes") {
+            // console.log(`The ${mutation.attributeName} attribute was modified.`);
+          }
+        }
+
+        console.log(instances)
+      });
+
+
+
+      // Start observing the target node for configured mutations
+      observer.observe(document, { attributes: true, childList: true, subtree: true });
+    </script>
+  </head>
+  <body>
+    <!-- <button a-id="1" a-components="loud|quiet" a-events="click#loud#shout|click#quiet#whisper">sup</button> -->
+    <button a-enabled a-show="open:true" a-id="1" a-events="click#loud#shout|window#click#quiet#whisper|click#responder#fetch">sup</button>
+
+    <script>
+      const dropdown = () => ({
+        toggle() {
+          this.$refs.content.hide()
+        }
+      })
+    </script>
+
+    <div a-component="dropdown">
+      <button a-events="click#dropdown#toggle">Expand</button>
+
+      <span style="display: none;" a-ref="content">
+          Content...
+      </span>
+    </div>
+
+    <script>
+      // const instances = {}
+
+      // // Create an observer instance linked to the callback function
+      // const observer = new MutationObserver((mutations, observer) => {
+      //   let addedNodes = []
+      //   let removedNodes = []
+      //   let elementType = 1
+
+      //   for (const mutation of mutations) {
+      //     if (mutation.type === "childList") {
+      //       mutation.addedNodes.forEach(node => node.nodeType === 1 && addedNodes.push(node))
+      //       mutation.removedNodes.forEach(node => node.nodeType === 1 && removedNodes.push(node))
+
+      //       console.log(addedNodes)
+      //       console.log(removedNodes)
+
+      //       addedNodes.forEach((node) => {
+      //         console.log(node)
+      //       })
+
+      //     } else if (mutation.type === "attributes") {
+      //       // console.log(`The ${mutation.attributeName} attribute was modified.`);
+      //     }
+      //   }
+      // });
+
+      // // Start observing the target node for configured mutations
+      // observer.observe(document, { attributes: true, childList: true, subtree: true });
+
+      // // Later, you can stop observing
+      // observer.disconnect();
+
+      var html = function (str) {
+        var parser = new DOMParser()
+        var doc = parser.parseFromString(str, 'text/html')
+        return doc
+      }
+
+      const Ankle = {
+        request(url) {
+          let response = html('<ankle render="replace#1"><p a-id="1">request</p></ankle>')
+
+          response.querySelectorAll('ankle').forEach((renderEl) => {
+            const id = renderEl.firstChild.getAttribute('a-id')
+
+            document.querySelectorAll(`[a-id='${id}']`).forEach((el) => {
+              el.outerHTML = renderEl.innerHTML
+            })
+          })
+        },
+        append(id, url) {
+
+        },
+        replace(id, url) {
+          const response = '<p>hello</p>'
+
+          document.querySelectorAll(`[a-id='${id}']`).forEach((el) => {
+            el.outerHTML = response
+          })
+        },
+        components: {
+          dropdown: {
+            toggle() {
+              $targets.
+            }
+          },
+          loud: {
+            shout({ $el, $event, $emit }) {
+              console.log($el)
+              console.log($event)
+
+              $emit()
+
+              console.log('AHHH!!')
+            }
+          },
+          quiet: {
+            whisper() {
+              console.log('ahhh..')
+            }
+          },
+          responder: {
+            fetch() {
+              Ankle.request()
+            }
+          }
+        }
+      }
+
+      const elements = document.querySelectorAll('[a-events]')
+
+      elements.forEach((el) => {
+        const events = el.getAttribute('a-events').split('|')
+
+        events.forEach((event) => {
+          event = event.split('#')
+
+          if(event.length === 4) {
+            let scope
+
+            if (event[0] === 'window') {
+              scope = window
+            } else if (event[0] === 'document') {
+              scope = document
+            } else {
+              // do some query magic
+            }
+
+            scope.addEventListener(event[1], (e) => {
+              Ankle.components[event[2]][event[3]]({
+                $el: el,
+                $event: e,
+                $emit: () => { console.log('up') },
+              })
+            })
+          } else {
+            el.addEventListener(event[0], (e) => {
+              Ankle.components[event[1]][event[2]]({
+                $el: el,
+                $event: e,
+                $emit: () => { console.log('up') },
+              })
+            })
+          }
+        })
+      })
+    </script>
+  </body>
+</html>
+
+
+
+
+<!-- stateless components -->
+
+<!-- events -->
+<!-- emitters -> up -> down -->
+<!-- mutations -->
+<!-- actions -->
+<!-- computed -->
+
+
+<!-- ankle('id').replace('/') -->

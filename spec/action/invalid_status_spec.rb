@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class InvalidStatus < Enkel::Action
   def call
     respond :random_error, "Random error"

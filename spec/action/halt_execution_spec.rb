@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HaltExecution < Enkel::Action
   def call
     respond! :ok, "FIRST"

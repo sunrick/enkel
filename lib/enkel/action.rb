@@ -1,7 +1,9 @@
 class Enkel::Action
   class NotImplementedError < StandardError; end
+  class HaltExecution < StandardError; end
+  class InvalidStatusError < StandardError; end
 
-  STATUSES = {
+  HTTP_STATUS_MAPPING = {
     continue: 100,
     switching_protocols: 101,
     processing: 102,
@@ -67,13 +69,37 @@ class Enkel::Action
     network_authentication_required: 511
   }.freeze
 
-  attr_accessor :status, :body
+  attr_accessor :body
+  attr_reader :status
 
   class << self
+    attr_accessor :debug
+
     def call(attributes = {})
       instance = new(**attributes)
       instance.call
       instance
+    rescue Enkel::Action::HaltExecution => error
+      halt_execution_handler(instance, error)
+    rescue StandardError => error
+      error_handler(instance, error)
+    end
+
+    def halt_execution_handler(instance, error)
+      instance
+    end
+
+    def error_handler(instance, error)
+      raise error if debug
+
+      instance.status = :internal_server_error
+      instance.body = nil
+
+      instance
+    end
+
+    def code(status)
+      HTTP_STATUS_MAPPING[status]
     end
   end
 
@@ -86,11 +112,24 @@ class Enkel::Action
     self.body = object if object
   end
 
+  def respond!(status = nil, object = nil)
+    respond(status, object)
+    raise Enkel::Action::HaltExecution
+  end
+
+  def status=(status)
+    raise Enkel::Action::InvalidStatusError unless HTTP_STATUS_MAPPING[status]
+    @status = status
+  end
+
+  def code
+    self.class.code(status)
+  end
+
   def success?
     return @success if defined?(@success)
 
-    code = self.status.is_a?(Integer) ? self.status : STATUSES[self.status]
-    @success = code.between?(100, 399) ? true : false
+    @success = code.between?(100, 399)
   end
 
   def failure?

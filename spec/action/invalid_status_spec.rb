@@ -1,10 +1,11 @@
-# frozen_string_literal: true
-
-class NotImplemented < Enkel::Action
+class InvalidStatus < Enkel::Action
+  def call
+    respond :random_error, "Random error"
+  end
 end
 
-RSpec.describe NotImplemented do
-  it "responds with server error" do
+RSpec.describe InvalidStatus do
+  it "responds with a server error" do
     result = described_class.call
 
     expect(result.success?).to be false

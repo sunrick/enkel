@@ -2,17 +2,17 @@
 
 class HaltExecution < Enkel::Action
   def call
-    respond! :ok, "FIRST"
-    respond :unprocessable_entity, "SECOND"
+    respond! :ok, message: "FIRST"
+    respond :unprocessable_entity, message: "SECOND"
   end
 end
 
 RSpec.describe HaltExecution do
   it "responds with first body response" do
-    result = described_class.call
+    action = described_class.call
 
-    expect(result.success?).to be true
-    expect(result.status).to eq :ok
-    expect(result.body).to eq "FIRST"
+    expect(action.success?).to be true
+    expect(action.status).to eq :ok
+    expect(action.body[:message]).to eq "FIRST"
   end
 end

@@ -5,12 +5,12 @@ end
 
 RSpec.describe NotImplemented do
   it "responds with server error" do
-    result = described_class.call
+    action = described_class.call
 
-    expect(result.success?).to be false
-    expect(result.status).to eq :internal_server_error
-    expect(result.code).to eq 500
-    expect(result.body).to eq({})
+    expect(action.success?).to be false
+    expect(action.status).to eq :internal_server_error
+    expect(action.code).to eq 500
+    expect(action.body).to eq({})
   end
 
   context "when debug mode with block" do

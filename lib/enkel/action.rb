@@ -120,7 +120,7 @@ class Enkel::Action
 
   def respond(status = nil, object = nil)
     self.status = status if status
-    self.body = object if object
+    self.body = body.merge(object) if object
   end
 
   def respond!(status = nil, object = nil)
@@ -138,7 +138,7 @@ class Enkel::Action
   end
 
   def body
-    @body ||= Enkel::Action::Body.new
+    @body ||= {}
   end
 
   def success?

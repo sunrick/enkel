@@ -31,6 +31,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "zeitwerk", "~> 2.6.8"
 
+  spec.add_development_dependency "pry", "~> 0.14.2"
+
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
 end

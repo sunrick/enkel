@@ -72,9 +72,9 @@ class Enkel::Action
   attr_accessor :body
   attr_reader :status
 
-  class << self
-    attr_accessor :debug
+  @@debug = false
 
+  class << self
     def call(attributes = {})
       instance = new(**attributes)
       instance.call
@@ -100,6 +100,21 @@ class Enkel::Action
 
     def code(status)
       HTTP_STATUS_MAPPING[status]
+    end
+
+    def debug=(value)
+      @@debug = value
+    end
+
+    def debug(&block)
+      if block_given?
+        self.debug = true
+        yield
+      end
+
+      @@debug
+    ensure
+      self.debug = false if block_given?
     end
   end
 

@@ -98,10 +98,6 @@ class Enkel::Action
       instance
     end
 
-    def code(status)
-      HTTP_STATUS_MAPPING[status]
-    end
-
     def debug=(value)
       @@debug = value
     end
@@ -133,12 +129,12 @@ class Enkel::Action
   end
 
   def status=(status)
-    raise Enkel::Action::InvalidStatusError unless HTTP_STATUS_MAPPING[status]
     @status = status
+    raise Enkel::Action::InvalidStatusError unless code
   end
 
   def code
-    self.class.code(status)
+    HTTP_STATUS_MAPPING[status]
   end
 
   def success?

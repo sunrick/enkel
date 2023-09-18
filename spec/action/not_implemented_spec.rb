@@ -10,7 +10,7 @@ RSpec.describe NotImplemented do
     expect(result.success?).to be false
     expect(result.status).to eq :internal_server_error
     expect(result.code).to eq 500
-    expect(result.body).to eq nil
+    expect(result.body).to eq({})
   end
 
   context "when debug mode with block" do

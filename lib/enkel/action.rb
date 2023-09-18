@@ -137,6 +137,10 @@ class Enkel::Action
     HTTP_STATUS_MAPPING[status]
   end
 
+  def body
+    @body ||= Enkel::Action::Body.new
+  end
+
   def success?
     return @success if defined?(@success)
 

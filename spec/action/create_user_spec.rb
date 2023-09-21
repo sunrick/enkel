@@ -11,14 +11,6 @@ class User
     errors[:last_name] = ["must be a string"] unless last_name.is_a?(String)
     errors.empty?
   end
-    end
-
-    unless last_name.is_a?(String)
-      errors[:last_name] = ["must be a string"]
-    end
-
-    errors.empty?
-  end
 
   def errors
     @errors ||= {}
@@ -31,7 +23,7 @@ class CreateUser < Enkel::Action
   end
 
   def validate!
-    error(first_name: ["can't be blank"]) if @params[:first_name].nil
+    error(first_name: ["can't be blank"]) if @params[:first_name].nil?
     error(last_name: ["can't be blank"]) if @params[:last_name].nil?
     respond! :unprocessable_entity, message: "User not created" if errors?
   end
@@ -56,7 +48,7 @@ end
 RSpec.describe CreateUser do
   context "when given valid params" do
     it "creates a user" do
-      response = described_class.call!(
+      response = described_class.call(
         params: { first_name: "John", last_name: "Doe" }
       )
 

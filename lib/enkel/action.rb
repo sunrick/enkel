@@ -30,7 +30,7 @@ class Enkel::Action
       instance = new(**attributes)
       instance.call
 
-      if instance.response.errors?
+      if instance.errors?
         raise Enkel::Response::Errors, instance.response.errors
       end
 

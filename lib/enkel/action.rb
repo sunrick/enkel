@@ -46,12 +46,12 @@ class Enkel::Action
     raise Enkel::Action::NotImplementedError
   end
 
-  def respond(status = nil, object = nil)
+  def respond(status = nil, hash = nil)
     if status && status.respond_to?(:to_h)
       response.data = status
     else
       response.status = status if status
-      response.data = object if object
+      response.data = hash if hash
     end
   end
 
@@ -64,8 +64,13 @@ class Enkel::Action
     @response ||= Enkel::Response.new
   end
 
-  def error(key, value)
-    response.error(key, value)
+  def error(hash)
+    response.error(hash)
+  end
+
+  def error!(hash)
+    error(hash)
+    raise Enkel::Action::HaltExecution
   end
 
   def error_handler(error)

@@ -3,9 +3,11 @@ class Enkel::Errors
     @hash = {}
   end
 
-  def add(key, value)
-    @hash[key] ||= []
-    @hash[key] << value
+  def add(hash)
+    hash.each do |key, value|
+      @hash[key] ||= []
+      @hash[key] += Array(value)
+    end
   end
 
   def any?
@@ -18,5 +20,9 @@ class Enkel::Errors
 
   def to_h
     @hash
+  end
+
+  def ==(other)
+    @hash == other.to_h
   end
 end

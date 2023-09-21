@@ -1,6 +1,6 @@
 class ErrorsPresent < Enkel::Action
   def call
-    error :random_error, "look this is not good"
+    error base: "look this is not good"
   end
 end
 
@@ -26,7 +26,7 @@ RSpec.describe ErrorsPresent do
       described_class.call!
     rescue Enkel::Response::Errors => error
       expect(error.errors.any?).to be true
-      expect(error.errors.to_h).to eq({ random_error: ["look this is not good"] })
+      expect(error.errors).to eq({ base: ["look this is not good"] })
     end
   end
 end

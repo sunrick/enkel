@@ -25,10 +25,14 @@ RSpec.describe AddNumbers do
   end
 
   it "adds two numbers" do
-    action = described_class.new(number_one: 1, number_two: 2)
-    allow(described_class).to receive(:new).and_return(action)
+    options = { number_one: 1, number_two: 2 }
+    double = described_class.new(**options)
 
-    action.call
+    allow(described_class).to receive(:new).with(**options).and_return(double)
+
+    action = described_class.call(**options)
+
+    expect(action).to eq double
 
     expect(action.success?).to be true
     expect(action.status).to eq :ok

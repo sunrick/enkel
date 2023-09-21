@@ -1,10 +1,9 @@
-class RespondWithNothing < Enkel::Action
+class NoRespond < Enkel::Action
   def call
-    respond
   end
 end
 
-RSpec.describe RespondWithNothing do
+RSpec.describe NoRespond do
   it "responds with a message" do
     action = described_class.call
 

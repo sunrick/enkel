@@ -2,8 +2,6 @@ class Enkel::Action
   class NotImplementedError < StandardError; end
   class HaltExecution < StandardError; end
 
-  attr_accessor :data
-
   # TODO:
 
   # USE CASES:

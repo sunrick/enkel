@@ -75,6 +75,16 @@ class Enkel::Action
 
   attr_accessor :data
 
+  # TODO:
+
+  # USE CASES:
+  # - USE ANYWHERE
+  # - API endpoint
+  # - HTTP Request replacement
+  # - Background jobs
+  # - Service objects
+  # - Rails controller action replacement
+
   class << self
     def call(attributes = {})
       instance = new(**attributes)
@@ -87,6 +97,7 @@ class Enkel::Action
       instance
     end
 
+    # TODO: Raise error if errors present?
     def call!(attributes = {})
       instance = new(**attributes)
       instance.call

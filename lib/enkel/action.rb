@@ -69,6 +69,9 @@ class Enkel::Action
     response.errors?
   end
 
+  # TODO: Integrate with ActiveModel::Errors?
+  # TODO: Integrate with Dry::Validation?
+  # TODO: Integrate with I18n?
   def error(hash)
     response.error(hash)
   end

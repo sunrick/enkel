@@ -8,7 +8,7 @@ class ErrorHaltExecution < Enkel::Action
 end
 
 RSpec.describe ErrorHaltExecution do
-  it "responds with first body response" do
+  it "responds with first error" do
     response = described_class.call
 
     expect(response.success?).to be false

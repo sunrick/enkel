@@ -9,7 +9,7 @@ class AddMultipleErrors < Enkel::Action
 end
 
 RSpec.describe AddMultipleErrors do
-  it "responds with first body response" do
+  it "responds with correct errors" do
     response = described_class.call
 
     expect(response.success?).to be false

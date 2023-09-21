@@ -9,10 +9,10 @@ end
 
 RSpec.describe HaltExecution do
   it "responds with first body response" do
-    action = described_class.call
+    response = described_class.call
 
-    expect(action.success?).to be true
-    expect(action.status).to eq :ok
-    expect(action.data[:message]).to eq "FIRST"
+    expect(response.success?).to be true
+    expect(response.status).to eq :ok
+    expect(response.data[:message]).to eq "FIRST"
   end
 end

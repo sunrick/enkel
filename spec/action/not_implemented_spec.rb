@@ -5,11 +5,11 @@ end
 
 RSpec.describe NotImplemented do
   it "responds with server error" do
-    action = described_class.call
+    response =described_class.call
 
-    expect(action.success?).to be false
-    expect(action.status).to eq :internal_server_error
-    expect(action.code).to eq 500
-    expect(action.data).to eq({})
+    expect(response.success?).to be false
+    expect(response.status).to eq :internal_server_error
+    expect(response.code).to eq 500
+    expect(response.data).to eq({})
   end
 end

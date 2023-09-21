@@ -6,10 +6,10 @@ end
 
 RSpec.describe SingleRespondArgumentStatusSpec do
   it "responds with :ok status" do
-    action = described_class.call
+    response =described_class.call
 
-    expect(action.success?).to be true
-    expect(action.status).to eq :ok
-    expect(action.data).to eq({})
+    expect(response.success?).to be true
+    expect(response.status).to eq :ok
+    expect(response.data).to eq({})
   end
 end

@@ -13,6 +13,6 @@ RSpec.describe HaltExecution do
 
     expect(action.success?).to be true
     expect(action.status).to eq :ok
-    expect(action.body[:message]).to eq "FIRST"
+    expect(action.data[:message]).to eq "FIRST"
   end
 end

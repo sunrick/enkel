@@ -21,7 +21,18 @@ RSpec.describe AddNumbers do
 
     expect(action.success?).to be true
     expect(action.status).to eq :ok
-    expect(action.body[:message]).to eq 3
+    expect(action.data[:message]).to eq 3
+  end
+
+  it "adds two numbers" do
+    action = described_class.new(number_one: 1, number_two: 2)
+    allow(described_class).to receive(:new).and_return(action)
+
+    action.call
+
+    expect(action.success?).to be true
+    expect(action.status).to eq :ok
+    expect(action.data[:message]).to eq 3
   end
 
   it "responds with an error when given incorrect data" do
@@ -29,6 +40,6 @@ RSpec.describe AddNumbers do
 
     expect(action.success?).to be false
     expect(action.status).to eq :unprocessable_entity
-    expect(action.body).to eq message: "Invalid data"
+    expect(action.data).to eq message: "Invalid data"
   end
 end

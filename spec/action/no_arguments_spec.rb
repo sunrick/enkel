@@ -12,6 +12,6 @@ RSpec.describe NoArguments do
 
     expect(action.success?).to be(true)
     expect(action.status).to eq(:ok)
-    expect(action.body).to eq(message: "No arguments")
+    expect(action.data).to eq(message: "No arguments")
   end
 end

@@ -30,6 +30,11 @@ class Enkel::Action
     def call!(attributes = {})
       instance = new(**attributes)
       instance.call
+
+      if instance.response.errors?
+        raise Enkel::Response::Errors, instance.response.errors
+      end
+
       instance.response
     rescue Enkel::Action::HaltExecution
       instance.response

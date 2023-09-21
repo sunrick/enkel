@@ -1,8 +1,17 @@
 class Enkel::Response
-    class InvalidStatusError < StandardError
+  class InvalidStatusError < StandardError
     def initialize(status)
       super("Invalid status: #{status}")
     end
+  end
+
+  class Errors < StandardError
+    def initialize(errors)
+      @errors = errors
+      super("Errors present")
+    end
+
+    attr_reader :errors
   end
 
   HTTP_STATUS_MAPPING = {
@@ -104,7 +113,7 @@ class Enkel::Response
     @success = code.between?(100, 399) && errors.empty?
   end
 
-  def failure?
+  def errors?
     !success?
   end
 
@@ -112,9 +121,9 @@ class Enkel::Response
     @success = false
 
     if code.nil? || code.between?(100, 399)
-      response.status ||= :unprocessable_entity
+      self.status = :unprocessable_entity
     end
 
-    response.errors.add(key, value)
+    self.errors.add(key, value)
   end
 end

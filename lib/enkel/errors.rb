@@ -37,7 +37,7 @@ class Enkel::Errors
   def _add(hash)
     hash.each do |key, value|
       @hash[key] ||= Enkel::Set.new
-      @hash[key] << value
+      @hash[key] += Set.new(Array(value))
     end
   end
 end

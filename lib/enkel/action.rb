@@ -26,6 +26,7 @@ class Enkel::Action
 
     # TODO: Raise error if errors present?
     def call!(attributes = {})
+      # TODO: Handle initialize errors?
       instance = new(**attributes)
       instance.call
 
@@ -62,6 +63,10 @@ class Enkel::Action
 
   def response
     @response ||= Enkel::Response.new
+  end
+
+  def errors?
+    response.errors?
   end
 
   def error(hash)

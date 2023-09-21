@@ -7,8 +7,10 @@ class User
   end
 
   def save
-    unless first_name.is_a?(String)
-      errors[:first_name] = ["must be a string"]
+    errors[:first_name] = ["must be a string"] unless first_name.is_a?(String)
+    errors[:last_name] = ["must be a string"] unless last_name.is_a?(String)
+    errors.empty?
+  end
     end
 
     unless last_name.is_a?(String)
@@ -29,14 +31,8 @@ class CreateUser < Enkel::Action
   end
 
   def validate!
-    if @params[:first_name].nil?
-      error first_name: ["can't be blank"]
-    end
-
-    if @params[:last_name].nil?
-      error last_name: ["can't be blank"]
-    end
-
+    error(first_name: ["can't be blank"]) if @params[:first_name].nil
+    error(last_name: ["can't be blank"]) if @params[:last_name].nil?
     respond! :unprocessable_entity, message: "User not created" if errors?
   end
 

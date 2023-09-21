@@ -104,7 +104,7 @@ class Enkel::Action
   end
 
   def respond(status = nil, object = nil)
-    if status.respond_to?(:to_h)
+    if status && status.respond_to?(:to_h)
       self.data = status
     else
       self.status = status if status
@@ -128,6 +128,13 @@ class Enkel::Action
 
   def code
     HTTP_STATUS_MAPPING[status]
+  end
+
+  def error(key, value)
+    @success = false
+    self.status ||= :unprocessable_entity
+
+    errors.add(key, value)
   end
 
   def errors

@@ -31,9 +31,7 @@ RSpec.describe NotImplemented do
       }.to raise_error Enkel::Action::NotImplementedError
       Enkel::Action.debug = false
 
-      expect {
-        described_class.call
-      }.to_not raise_error Enkel::Action::NotImplementedError
+      expect { described_class.call }.to_not raise_error
     end
   end
 

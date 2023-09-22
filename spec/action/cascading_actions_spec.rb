@@ -6,25 +6,19 @@ module CascadingActions
     end
 
     def call
-      CreateUser.call(email: @email) do |r|
-        if r.success?
-          data[:user] = r.data[:user]
-        else
-          error! r.errors
-        end
-      end
+      CreateUser.call(email: @email) { |r| merge!(r) }
 
-      CreateOrganization.call(name: @organization_name) do |r|
-        data[:organization] = r.data[:organization]
-        error! r.errors if r.errors?
-      end
+      CreateOrganization.call(name: @organization_name) { |r| merge!(r) }
 
       NotifyAdmins.call(
         user: data[:user],
         organization: data[:organization]
       ) do |r|
-        data[:notify_admins] = r.data
-        error! r.errors if r.errors?
+        if r.success?
+          data[:notify_admins] = r.data
+        else
+          error! r.errors
+        end
       end
     end
   end

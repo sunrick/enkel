@@ -101,11 +101,31 @@ class Enkel::Action
 
   def error!(hash)
     error(hash)
-    raise Enkel::Action::HaltExecution
+    halt_execution!
   end
 
   def error_handler(error)
     response.status = :internal_server_error
     error(server: "internal server error")
+  end
+
+  def merge(other_response)
+    if other_response.success?
+      response.data.merge!(other_response.data)
+    else
+      error other_response.errors
+    end
+  end
+
+  def merge!(other_response)
+    if other_response.success?
+      response.data.merge!(other_response.data)
+    else
+      error! other_response.errors
+    end
+  end
+
+  def halt_execution!
+    raise Enkel::Action::HaltExecution
   end
 end

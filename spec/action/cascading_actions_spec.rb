@@ -10,13 +10,13 @@ module CascadingActions
       create_organization = CreateOrganization.call!(name: @organization_name)
       notify_admins =
         NotifyAdmins.call!(
-          user: create_user.data[:user],
+          user: create_user.data,
           organization: create_organization.data[:organization]
         )
 
-      respond user: create_user.data[:user],
-              organization: create_organization.data[:organization],
-              message: notify_admins.data[:message]
+      respond user: create_user.data,
+              organization: create_organization.data,
+              notify_admins: notify_admins.data
     end
   end
 
@@ -27,7 +27,7 @@ module CascadingActions
 
     def call
       if @email == "valid@gmail.com"
-        respond user: { email: @email }
+        respond email: @email
       else
         error email: "invalid email"
       end
@@ -41,7 +41,7 @@ module CascadingActions
 
     def call
       if @name == "valid_name"
-        respond organization: { name: @name }
+        respond name: @name
       else
         error name: "invalid name"
       end
@@ -55,7 +55,7 @@ module CascadingActions
     end
 
     def call
-      respond message: "Admins notified"
+      respond "Admins notified"
     end
   end
 end

@@ -21,12 +21,20 @@ class Enkel::Action
       @before_hooks ||= []
     end
 
+    def around_hooks
+      @around_hooks ||= []
+    end
+
     def after_hooks
       @after_hooks ||= []
     end
 
     def before(method_name)
       before_hooks << method_name
+    end
+
+    def around(method_name)
+      around_hooks << method_name
     end
 
     def after(method_name)
@@ -37,7 +45,7 @@ class Enkel::Action
       instance = new(**attributes)
 
       before_hooks.each { |hook| instance.send(hook) }
-      instance.call
+      around_hooks.each { |hook| instance.send(hook) { instance.call } }
       after_hooks.each { |hook| instance.send(hook) }
 
       yield(instance.response) if block_given?
@@ -65,9 +73,9 @@ class Enkel::Action
     def call!(attributes = {})
       instance = new(**attributes)
 
-      before_hooks.each { |hook| instance.send(:hook) }
-      instance.call
-      after_hooks.each { |hook| instance.send(:hook) }
+      before_hooks.each { |hook| instance.send(hook) }
+      around_hooks.each { |hook| instance.send(hook) { instance.call } }
+      after_hooks.each { |hook| instance.send(hook) }
 
       if instance.errors?
         raise Enkel::Response::Errors, instance.response.errors

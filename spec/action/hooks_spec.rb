@@ -1,6 +1,7 @@
 class BeforeHook < Enkel::Action
   before :validate_name!
   before :append_cheese_to_name
+  around :log_stuff
   after :validate_response!
   after :add_cow_comment
   after :uppercase_response_values
@@ -15,6 +16,12 @@ class BeforeHook < Enkel::Action
 
   def append_cheese_to_name
     @name += " cheese"
+  end
+
+  def log_stuff
+    data[:start] = "before"
+    yield
+    data[:stop] = "after"
   end
 
   def validate_response!
@@ -34,16 +41,22 @@ class BeforeHook < Enkel::Action
   end
 end
 
+# TODO: CHECK IF AROUND SHOULD BE AROUND BEFORE + AFTER HOOKS???
 RSpec.describe BeforeHook do
   context "when name is valid" do
-    # around { |example| Enkel::Action.debug { example.run } }
+    around { |example| Enkel::Action.debug { example.run } }
 
     it "responds successfully" do
       response = described_class.call(name: "goat")
 
       expect(response.success?).to be(true)
       expect(response.status).to eq(:ok)
-      expect(response.data).to eq(name: "GOAT CHEESE", comment: "MOO MOO!")
+      expect(response.data).to eq(
+        name: "GOAT CHEESE",
+        comment: "MOO MOO!",
+        start: "BEFORE",
+        stop: "AFTER"
+      )
       expect(response.errors).to eq({})
     end
   end

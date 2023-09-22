@@ -17,10 +17,31 @@ class Enkel::Action
   # - Rails controller action replacement
 
   class << self
+    def before_hooks
+      @before_hooks ||= []
+    end
+
+    def after_hooks
+      @after_hooks ||= []
+    end
+
+    def before(method_name)
+      before_hooks << method_name
+    end
+
+    def after(method_name)
+      after_hooks << method_name
+    end
+
     def call(attributes = {}, &block)
       instance = new(**attributes)
+
+      before_hooks.each { |hook| instance.send(hook) }
       instance.call
+      after_hooks.each { |hook| instance.send(hook) }
+
       yield(instance.response) if block_given?
+
       instance.response
     rescue Enkel::Action::HaltExecution
       yield(instance.response) if block_given?
@@ -43,13 +64,17 @@ class Enkel::Action
 
     def call!(attributes = {})
       instance = new(**attributes)
+
+      before_hooks.each { |hook| instance.send(:hook) }
       instance.call
+      after_hooks.each { |hook| instance.send(:hook) }
 
       if instance.errors?
         raise Enkel::Response::Errors, instance.response.errors
       end
 
       yield(instance.response) if block_given?
+
       instance.response
     rescue Enkel::Action::HaltExecution
       yield(instance.response) if block_given?

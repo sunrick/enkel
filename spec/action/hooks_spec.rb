@@ -1,7 +1,10 @@
-class BeforeHook < Enkel::Action
+class SharedHooks < Enkel::Action
   before :validate_name!
-  before :append_cheese_to_name
   after :validate_response!
+end
+
+class Hooks < SharedHooks
+  before :append_cheese_to_name
   after :add_cow_comment
   after :uppercase_response_values
 
@@ -34,11 +37,8 @@ class BeforeHook < Enkel::Action
   end
 end
 
-# TODO: CHECK IF AROUND SHOULD BE AROUND BEFORE + AFTER HOOKS???
-RSpec.describe BeforeHook do
+RSpec.describe Hooks do
   context "when name is valid" do
-    around { |example| Enkel::Action.debug { example.run } }
-
     it "responds successfully" do
       response = described_class.call(name: "goat")
 

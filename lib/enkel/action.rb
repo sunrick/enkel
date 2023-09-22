@@ -33,6 +33,19 @@ class Enkel::Action
       after_hooks << method_name
     end
 
+    def inherited(subclass)
+      subclass.inherit_before_hooks(before_hooks)
+      subclass.inherit_after_hooks(after_hooks)
+    end
+
+    def inherit_before_hooks(child_before_hooks)
+      before_hooks.concat(child_before_hooks)
+    end
+
+    def inherit_after_hooks(child_after_hooks)
+      after_hooks.concat(child_after_hooks)
+    end
+
     def call(attributes = {}, &block)
       instance = new(**attributes)
 

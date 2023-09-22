@@ -4,6 +4,8 @@ class Enkel::Action
   class HaltExecution < StandardError
   end
 
+  @@debug = false
+
   # TODO:
 
   # USE CASES:
@@ -27,6 +29,7 @@ class Enkel::Action
       if instance
         instance.error_handler(error)
         yield(instance.response) if block_given?
+        raise error if debug
         instance.response
       else
         Enkel::Response.new(
@@ -59,6 +62,21 @@ class Enkel::Action
         yield(instance.response) if block_given?
       end
       raise error
+    end
+
+    def debug=(value)
+      @@debug = value
+    end
+
+    def debug(&block)
+      if block_given?
+        self.debug = true
+        yield
+      end
+
+      @@debug
+    ensure
+      self.debug = false if block_given?
     end
   end
 

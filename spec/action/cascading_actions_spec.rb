@@ -6,9 +6,8 @@ module CascadingActions
     end
 
     def call
-      CreateUser.call(email: @email) { |r| merge!(r) }
-
-      CreateOrganization.call(name: @organization_name) { |r| merge!(r) }
+      merge! CreateUser.call(email: @email)
+      merge! CreateOrganization.call(name: @organization_name)
 
       NotifyAdmins.call(
         user: data[:user],
@@ -99,6 +98,20 @@ RSpec.describe CascadingActions::OnboardUser do
       expect(response.status).to eq(:unprocessable_entity)
       expect(response.data).to eq({})
       expect(response.errors).to eq(email: ["invalid email"])
+    end
+  end
+
+  context "when given invalid organization_name" do
+    it "errors" do
+      response =
+        described_class.call!(
+          email: "valid@gmail.com",
+          organization_name: "invalid_name"
+        )
+      expect(response.success?).to be(false)
+      expect(response.status).to eq(:unprocessable_entity)
+      expect(response.data).to eq(user: { email: "valid@gmail.com" })
+      expect(response.errors).to eq(name: ["invalid name"])
     end
   end
 end

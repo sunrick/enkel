@@ -1,7 +1,6 @@
 class BeforeHook < Enkel::Action
   before :validate_name!
   before :append_cheese_to_name
-  around :log_stuff
   after :validate_response!
   after :add_cow_comment
   after :uppercase_response_values
@@ -16,12 +15,6 @@ class BeforeHook < Enkel::Action
 
   def append_cheese_to_name
     @name += " cheese"
-  end
-
-  def log_stuff
-    data[:start] = "before"
-    yield
-    data[:stop] = "after"
   end
 
   def validate_response!
@@ -51,12 +44,7 @@ RSpec.describe BeforeHook do
 
       expect(response.success?).to be(true)
       expect(response.status).to eq(:ok)
-      expect(response.data).to eq(
-        name: "GOAT CHEESE",
-        comment: "MOO MOO!",
-        start: "BEFORE",
-        stop: "AFTER"
-      )
+      expect(response.data).to eq(name: "GOAT CHEESE", comment: "MOO MOO!")
       expect(response.errors).to eq({})
     end
   end

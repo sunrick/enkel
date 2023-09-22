@@ -36,4 +36,12 @@ RSpec.describe NotImplemented do
       }.to_not raise_error Enkel::Action::NotImplementedError
     end
   end
+
+  context "when debug matcher", :debug do
+    it "raises error" do
+      expect {
+        described_class.call
+      }.to raise_error Enkel::Action::NotImplementedError
+    end
+  end
 end

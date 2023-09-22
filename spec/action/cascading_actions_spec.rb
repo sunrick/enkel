@@ -7,15 +7,20 @@ module CascadingActions
 
     def call
       create_user = CreateUser.call!(email: @email)
-      create_organization = CreateOrganization.call!(name: @organization_name)
+
+      create_organization =
+        run CreateOrganization, name: @organization_name do |response|
+          error organization: response.errors if response.errors?
+        end
+
       notify_admins =
         NotifyAdmins.call!(
-          user: create_user.data,
+          user: create_user.data[:user],
           organization: create_organization.data[:organization]
         )
 
-      respond user: create_user.data,
-              organization: create_organization.data,
+      respond user: create_user.data[:user],
+              organization: create_organization.data[:organization],
               notify_admins: notify_admins.data
     end
   end
@@ -27,7 +32,7 @@ module CascadingActions
 
     def call
       if @email == "valid@gmail.com"
-        respond email: @email
+        respond user: { email: @email }
       else
         error email: "invalid email"
       end
@@ -41,7 +46,7 @@ module CascadingActions
 
     def call
       if @name == "valid_name"
-        respond name: @name
+        respond organization: { name: @name }
       else
         error name: "invalid name"
       end
@@ -55,7 +60,7 @@ module CascadingActions
     end
 
     def call
-      respond "Admins notified"
+      respond message: "Admins notified"
     end
   end
 end
@@ -78,7 +83,9 @@ RSpec.describe CascadingActions::OnboardUser do
         organization: {
           name: "valid_name"
         },
-        message: "Admins notified"
+        notify_admins: {
+          message: "Admins notified"
+        }
       )
     end
   end

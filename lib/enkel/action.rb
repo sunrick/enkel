@@ -96,4 +96,10 @@ class Enkel::Action
     response.status = :internal_server_error
     error(server: "internal server error")
   end
+
+  def run(klass, args = {}, &block)
+    response = klass.call(args)
+    yield response
+    response
+  end
 end

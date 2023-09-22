@@ -6,22 +6,26 @@ module CascadingActions
     end
 
     def call
-      create_user = CreateUser.call!(email: @email)
-
-      create_organization =
-        run CreateOrganization, name: @organization_name do |response|
-          error organization: response.errors if response.errors?
+      CreateUser.call(email: @email) do |r|
+        if r.success?
+          data[:user] = r.data[:user]
+        else
+          error! r.errors
         end
+      end
 
-      notify_admins =
-        NotifyAdmins.call!(
-          user: create_user.data[:user],
-          organization: create_organization.data[:organization]
-        )
+      CreateOrganization.call(name: @organization_name) do |r|
+        data[:organization] = r.data[:organization]
+        error! r.errors if r.errors?
+      end
 
-      respond user: create_user.data[:user],
-              organization: create_organization.data[:organization],
-              notify_admins: notify_admins.data
+      NotifyAdmins.call(
+        user: data[:user],
+        organization: data[:organization]
+      ) do |r|
+        data[:notify_admins] = r.data
+        error! r.errors if r.errors?
+      end
     end
   end
 
@@ -87,6 +91,20 @@ RSpec.describe CascadingActions::OnboardUser do
           message: "Admins notified"
         }
       )
+    end
+  end
+
+  context "when given invalid email" do
+    it "errors" do
+      response =
+        described_class.call!(
+          email: "invalid@gmail.com",
+          organization_name: "valid_name"
+        )
+      expect(response.success?).to be(false)
+      expect(response.status).to eq(:unprocessable_entity)
+      expect(response.data).to eq({})
+      expect(response.errors).to eq(email: ["invalid email"])
     end
   end
 end

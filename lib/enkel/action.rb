@@ -15,15 +15,18 @@ class Enkel::Action
   # - Rails controller action replacement
 
   class << self
-    def call(attributes = {})
+    def call(attributes = {}, &block)
       instance = new(**attributes)
       instance.call
+      yield(instance.response) if block_given?
       instance.response
     rescue Enkel::Action::HaltExecution
+      yield(instance.response) if block_given?
       instance.response
     rescue StandardError => error
       if instance
         instance.error_handler(error)
+        yield(instance.response) if block_given?
         instance.response
       else
         Enkel::Response.new(
@@ -43,13 +46,18 @@ class Enkel::Action
         raise Enkel::Response::Errors, instance.response.errors
       end
 
+      yield(instance.response) if block_given?
       instance.response
     rescue Enkel::Action::HaltExecution
+      yield(instance.response) if block_given?
       instance.response
     rescue Enkel::Response::Errors => error
       raise error
     rescue StandardError => error
-      instance.error_handler(error) unless instance.nil?
+      if instance
+        instance.error_handler(error)
+        yield(instance.response) if block_given?
+      end
       raise error
     end
   end
@@ -80,6 +88,10 @@ class Enkel::Action
     response.errors?
   end
 
+  def data
+    response.data
+  end
+
   # TODO: Integrate with ActiveModel::Errors?
   # TODO: Integrate with Dry::Validation?
   # TODO: Integrate with I18n?
@@ -95,11 +107,5 @@ class Enkel::Action
   def error_handler(error)
     response.status = :internal_server_error
     error(server: "internal server error")
-  end
-
-  def run(klass, args = {}, &block)
-    response = klass.call(args)
-    yield response
-    response
   end
 end

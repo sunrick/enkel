@@ -14,19 +14,21 @@ RSpec.describe ErrorsPresent do
       expect(response.code).to eq(422)
       expect(response.data).to eq({})
     end
-
   end
 
   context ".call!" do
     it "raises error" do
-      expect { described_class.call! }.to raise_error(Enkel::Response::Errors, "Errors present")
+      expect { described_class.call! }.to raise_error(
+        Enkel::Response::Errors,
+        "Errors present"
+      )
     end
 
     it "has errors" do
       described_class.call!
     rescue Enkel::Response::Errors => error
       expect(error.errors.any?).to be(true)
-      expect(error.error().to eq({ base: ["look this is not good"] })
+      expect(error.errors).to eq({ base: ["look this is not good"] })
     end
   end
 end

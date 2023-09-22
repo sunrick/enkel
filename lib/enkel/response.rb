@@ -120,9 +120,7 @@ class Enkel::Response
   def error(hash)
     @success = false
 
-    if code.nil? || code.between?(100, 399)
-      self.status = :unprocessable_entity
-    end
+    self.status = :unprocessable_entity if code.nil? || code.between?(100, 399)
 
     self.errors.add(hash)
   end

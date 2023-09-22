@@ -31,10 +31,8 @@ class CreateUser < Enkel::Action
   def call
     validate!
 
-    user = User.new(
-      first_name: @params[:first_name],
-      last_name: @params[:last_name]
-    )
+    user =
+      User.new(first_name: @params[:first_name], last_name: @params[:last_name])
 
     if user.save
       respond :ok, user: user
@@ -48,12 +46,11 @@ end
 RSpec.describe CreateUser do
   context "when given valid params" do
     it "creates a user" do
-      response = described_class.call(
-        params: { first_name: "John", last_name: "Doe" }
-      )
+      response =
+        described_class.call(params: { first_name: "John", last_name: "Doe" })
 
-      expect(response.success?).to be true
-      expect(response.status).to eq :ok
+      expect(response.success?).to be(true)
+      expect(response.status).to eq(:ok)
       expect(response.data[:user].first_name).to eq("John")
       expect(response.data[:user].last_name).to eq("Doe")
     end
@@ -64,8 +61,8 @@ RSpec.describe CreateUser do
       it "responds with an error" do
         response = described_class.call(params: { last_name: "Doe" })
 
-        expect(response.success?).to be false
-        expect(response.status).to eq :unprocessable_entity
+        expect(response.success?).to be(false)
+        expect(response.status).to eq(:unprocessable_entity)
         expect(response.data).to eq(message: "User not created")
         expect(response.errors).to eq(first_name: ["can't be blank"])
       end
@@ -75,8 +72,8 @@ RSpec.describe CreateUser do
       it "responds with an error" do
         response = described_class.call(params: { first_name: "John" })
 
-        expect(response.success?).to be false
-        expect(response.status).to eq :unprocessable_entity
+        expect(response.success?).to be(false)
+        expect(response.status).to eq(:unprocessable_entity)
         expect(response.data).to eq(message: "User not created")
         expect(response.errors).to eq(last_name: ["can't be blank"])
       end
@@ -84,10 +81,11 @@ RSpec.describe CreateUser do
 
     context "when first_name is not a string" do
       it "responds with an error" do
-        response = described_class.call(params: { first_name: 1, last_name: "Doe" })
+        response =
+          described_class.call(params: { first_name: 1, last_name: "Doe" })
 
-        expect(response.success?).to be false
-        expect(response.status).to eq :unprocessable_entity
+        expect(response.success?).to be(false)
+        expect(response.status).to eq(:unprocessable_entity)
         expect(response.data).to eq(message: "User not created")
         expect(response.errors).to eq(first_name: ["must be a string"])
       end
@@ -95,10 +93,11 @@ RSpec.describe CreateUser do
 
     context "when last_name is not a string" do
       it "responds with an error" do
-        response = described_class.call(params: { first_name: "John", last_name: 1 })
+        response =
+          described_class.call(params: { first_name: "John", last_name: 1 })
 
-        expect(response.success?).to be false
-        expect(response.status).to eq :unprocessable_entity
+        expect(response.success?).to be(false)
+        expect(response.status).to eq(:unprocessable_entity)
         expect(response.data).to eq(message: "User not created")
         expect(response.errors).to eq(last_name: ["must be a string"])
       end

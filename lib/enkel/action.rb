@@ -1,6 +1,8 @@
 class Enkel::Action
-  class NotImplementedError < StandardError; end
-  class HaltExecution < StandardError; end
+  class NotImplementedError < StandardError
+  end
+  class HaltExecution < StandardError
+  end
 
   # TODO:
 
@@ -26,7 +28,9 @@ class Enkel::Action
       else
         Enkel::Response.new(
           status: :internal_server_error,
-          errors: { server: ["internal server error"] }
+          errors: {
+            server: ["internal server error"]
+          }
         )
       end
     end

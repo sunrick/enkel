@@ -5,7 +5,7 @@ end
 
 RSpec.describe NoRespond do
   it "responds with a message" do
-    response =described_class.call
+    response = described_class.call
 
     expect(response.success?).to be(true)
     expect(response.status).to eq(:ok)

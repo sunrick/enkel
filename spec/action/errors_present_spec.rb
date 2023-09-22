@@ -9,9 +9,9 @@ RSpec.describe ErrorsPresent do
     it "responds with a unprocessable_entity error" do
       response = described_class.call
 
-      expect(response.success?).to be false
-      expect(response.status).to eq :unprocessable_entity
-      expect(response.code).to eq 422
+      expect(response.success?).to be(false)
+      expect(response.status).to eq(:unprocessable_entity)
+      expect(response.code).to eq(422)
       expect(response.data).to eq({})
     end
 
@@ -25,8 +25,8 @@ RSpec.describe ErrorsPresent do
     it "has errors" do
       described_class.call!
     rescue Enkel::Response::Errors => error
-      expect(error.errors.any?).to be true
-      expect(error.errors).to eq({ base: ["look this is not good"] })
+      expect(error.errors.any?).to be(true)
+      expect(error.error().to eq({ base: ["look this is not good"] })
     end
   end
 end

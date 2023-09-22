@@ -19,8 +19,8 @@ RSpec.describe AddNumbers do
   it "adds two numbers" do
     response = described_class.call!(number_one: 1, number_two: 2)
 
-    expect(response.success?).to be true
-    expect(response.status).to eq :ok
+    expect(response.success?).to be(true)
+    expect(response.status).to eq(:ok)
     expect(response.data[:message]).to eq 3
   end
 
@@ -32,17 +32,16 @@ RSpec.describe AddNumbers do
 
     response = described_class.call(**options)
 
-
-    expect(response.success?).to be true
-    expect(response.status).to eq :ok
+    expect(response.success?).to be(true)
+    expect(response.status).to eq(:ok)
     expect(response.data[:message]).to eq 3
   end
 
   it "responds with an error when given incorrect data" do
     response = described_class.call(number_one: "1", number_two: 2)
 
-    expect(response.success?).to be false
-    expect(response.status).to eq :unprocessable_entity
-    expect(response.data).to eq message: "Invalid data"
+    expect(response.success?).to be(false)
+    expect(response.status).to eq(:unprocessable_entity)
+    expect(response.data).to eq(message: "Invalid data")
   end
 end

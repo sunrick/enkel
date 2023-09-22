@@ -11,8 +11,8 @@ RSpec.describe ErrorHaltExecution do
   it "responds with first error" do
     response = described_class.call
 
-    expect(response.success?).to be false
-    expect(response.status).to eq :unprocessable_entity
+    expect(response.success?).to be(false)
+    expect(response.status).to eq(:unprocessable_entity)
     expect(response.data).to eq({})
     expect(response.errors).to eq(base: ["FIRST"])
   end

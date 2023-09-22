@@ -20,13 +20,18 @@ class Enkel::Action
     rescue Enkel::Action::HaltExecution
       instance.response
     rescue StandardError => error
-      instance.error_handler(error)
-      instance.response
+      if instance
+        instance.error_handler(error)
+        instance.response
+      else
+        Enkel::Response.new(
+          status: :internal_server_error,
+          errors: { server: ["internal server error"] }
+        )
+      end
     end
 
-    # TODO: Raise error if errors present?
     def call!(attributes = {})
-      # TODO: Handle initialize errors?
       instance = new(**attributes)
       instance.call
 
@@ -37,8 +42,10 @@ class Enkel::Action
       instance.response
     rescue Enkel::Action::HaltExecution
       instance.response
+    rescue Enkel::Response::Errors => error
+      raise error
     rescue StandardError => error
-      instance.error_handler(error)
+      instance.error_handler(error) unless instance.nil?
       raise error
     end
   end
@@ -83,5 +90,6 @@ class Enkel::Action
 
   def error_handler(error)
     response.status = :internal_server_error
+    error(server: "internal server error")
   end
 end

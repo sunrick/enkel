@@ -16,6 +16,7 @@ RSpec.describe InvalidStatus do
       expect(response.status).to eq :internal_server_error
       expect(response.code).to eq 500
       expect(response.data).to eq({})
+      expect(response.errors).to eq(server: ["internal server error"])
     end
 
   end
